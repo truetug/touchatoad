@@ -60,11 +60,11 @@ async def process(user_id: str) -> None:
         print(response.status)
         print(await response.text())
     else:
-        user = User.parse_obj(await response.json())
+        user = User.model_validate_json(await response.json())
         os.mkdir(RESULT_DIR)
         with open(RESULT_DIR + "/result.json", "w") as fp:
             user.rctoken = response.request.headers["rctoken"]
-            data = user.json()
+            data = user.model_dump_json()
             print(data)
             fp.write(data)
 
