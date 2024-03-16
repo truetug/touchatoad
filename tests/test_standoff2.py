@@ -1,7 +1,12 @@
-import asyncio
+import os
 import sys
+import pytest
+import asyncio
 import pydantic
+
 from playwright.async_api import async_playwright
+
+#pytestmark = pytest.mark.anyio
 
 
 URL = "https://store.standoff2.com/"
@@ -12,6 +17,21 @@ class User(pydantic.BaseModel):
     name: str
     uid: int
     avatar: str
+    rctoken: str | None = None
+
+
+@pytest.fixture
+def anyio_backend():
+    return 'asyncio'
+
+
+@pytest.mark.anyio
+async def test_userdata():
+    user_id = os.environ.get("USER_ID")
+    if not user_id:
+        assert False
+
+    await process(user_id)
 
 
 async def process(user_id: str) -> None:
@@ -27,16 +47,24 @@ async def process(user_id: str) -> None:
     # Переходим на страницу по урлу
     await page.goto(URL)
     async with page.expect_response(lambda x: PATH in x.url) as response_info:
-        # Находим элемент с плейсхолдером ИНПУТ
+        # Находим элемент с плейсхолдером
         await page.get_by_placeholder("ID").fill(user_id)
         # Находим элемент кнопки
         await page.get_by_role("button").filter(has_text="Искать").click()
-        
+    
     response = await response_info.value
-    user = User.parse_obj(await response.json())
-    print(user)
-    # print(response.request.headers)
-    print(response.request.headers["rctoken"]) 
+    if response.status != 200:
+        print("Process failed")
+        print(response.request.method, response.request.url)
+        print(response.status)
+        print(await response.text())
+    else:
+        user = User.parse_obj(await response.json())
+        with open("test-results/result.json", "w") as fp:
+            user.rctoken = response.request.headers["rctoken"]
+            data = user.json()
+            print(data)
+            fp.write(data)
 
     # Закрываем браузер
     await browser.close()
