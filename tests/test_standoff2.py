@@ -11,6 +11,7 @@ from playwright.async_api import async_playwright
 
 URL = "https://store.standoff2.com/"
 PATH = "/api/v1/accounts"
+RESULT_DIR = "result"
 
 
 class User(pydantic.BaseModel):
@@ -60,8 +61,8 @@ async def process(user_id: str) -> None:
         print(await response.text())
     else:
         user = User.parse_obj(await response.json())
-        os.path.mkdir("test-results")
-        with open("test-results/result.json", "w") as fp:
+        os.mkdir(RESULT_DIR)
+        with open(RESULT_DIR + "/result.json", "w") as fp:
             user.rctoken = response.request.headers["rctoken"]
             data = user.json()
             print(data)
