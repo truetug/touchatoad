@@ -22,9 +22,7 @@ jobs:
     - name: Ensure browsers are installed
       run: python -m playwright install --with-deps
     - name: Run your tests
-      run: pytest --tracing=retain-on-failure
-      with:
-        user_id: '${{ github.event.inputs.user_id }}'
+      run: USER_ID=${{ github.event.inputs.user_id }} pytest --tracing=retain-on-failure
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       if: always()
