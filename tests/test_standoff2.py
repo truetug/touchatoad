@@ -60,6 +60,7 @@ async def process(user_id: str) -> None:
         print(await response.text())
     else:
         user = User.parse_obj(await response.json())
+        os.path.mkdir("test-results")
         with open("test-results/result.json", "w") as fp:
             user.rctoken = response.request.headers["rctoken"]
             data = user.json()
