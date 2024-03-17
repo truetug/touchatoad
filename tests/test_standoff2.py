@@ -3,7 +3,7 @@ import sys
 import pytest
 import asyncio
 import pydantic
-from random import shuffle
+from random import choice
 
 from playwright.async_api import async_playwright
 
@@ -15,7 +15,7 @@ PATH = "/api/v1/accounts"
 UA = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:123.0) Gecko/20100101 Firefox/123.0",
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-    
+
 )
 
 
@@ -47,7 +47,7 @@ async def process(user_id: str) -> None:
     # Создаем экземпляр Chrome
     browser = await playwright.firefox.launch()
     context = browser.new_context(
-        user_agent=shuffle(UA)[0],
+        user_agent=choice(UA),
     )
 
     # Создаем экземпляр страницы
