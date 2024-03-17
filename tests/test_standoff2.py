@@ -77,7 +77,7 @@ async def process(user_id: str) -> None:
         user = User.model_validate(await response.json())
         with open("result.json", "w") as fp:
             user.rctoken = response.request.headers["rctoken"]
-            data = user.model_dump_json(indent=4, ensure_ascii=False)
+            data = user.model_dump_json(indent=4)
             print(data)
             fp.write(data)
 
