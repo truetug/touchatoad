@@ -23,6 +23,7 @@ jobs:
     - name: Run tests
       run: |
         export USER_ID=${{ github.event.inputs.user_id }} 
+        printenv
         pytest -s
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
