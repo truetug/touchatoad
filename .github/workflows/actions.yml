@@ -19,10 +19,11 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    # - name: Ensure browsers are installed
-    #   run: python -m playwright install --with-deps
-    - name: Run your tests
-      run: USER_ID=${{ github.event.inputs.user_id }} pytest -s
+        python -m playwright install firefox --with-deps
+    - name: Run tests
+      run: |
+        export USER_ID=${{ github.event.inputs.user_id }} 
+        pytest -s
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       if: always()
