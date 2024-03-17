@@ -57,6 +57,9 @@ async def process(user_id: str) -> None:
         print("Process failed")
         print(response.request.method, response.request.url)
         print(response.status)
+        print(response.request.headers)
+        print()
+        print(response.headers)
         print(await response.text())
     else:
         user = User.model_validate(await response.json())
