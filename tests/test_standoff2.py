@@ -4,6 +4,8 @@ import json
 import pytest
 import asyncio
 import pydantic
+
+from datetime import datetime
 from random import choice
 
 from playwright.async_api import async_playwright
@@ -24,6 +26,7 @@ class User(pydantic.BaseModel):
     uid: int
     avatar: str
     rctoken: str | None = None
+    updated_at: datetime = pydantic.Field(default_factory=datetime.now)
 
 
 @pytest.fixture
@@ -74,7 +77,7 @@ async def process(user_id: str) -> None:
         user = User.model_validate(await response.json())
         with open("result.json", "w") as fp:
             user.rctoken = response.request.headers["rctoken"]
-            data = user.model_dump_json()
+            data = user.model_dump_json(indent=4, ensure_ascii=False)
             print(data)
             fp.write(data)
 
