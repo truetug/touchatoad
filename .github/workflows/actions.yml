@@ -27,5 +27,5 @@ jobs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: result.json
-        path: ./
+        name: user_data_${{ github.event.inputs.user_id }}
+        path: result.json
